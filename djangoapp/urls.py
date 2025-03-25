@@ -1,32 +1,11 @@
-"""
-URL configuration for djangoapp project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
-
-
 from fastapi import FastAPI
 from fastapi.middleware.wsgi import WSGIMiddleware
-from myapp.views import app as fastapi_app
+from myapp.views import app as fastapi_app  # Assuming the FastAPI app is defined in api/views.py
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-]
-
-# Integrating FastAPI with Django
-urlpatterns += [
-    path("api/", WSGIMiddleware(fastapi_app)),
+    path('admin/', admin.site.urls),  # Django Admin page
+    path('api/', WSGIMiddleware(fastapi_app)),  # FastAPI API
+    path('', WSGIMiddleware(fastapi_app)),  # Root URL pointing to FastAPI
 ]
