@@ -44,6 +44,15 @@ mode = "sequential"
 task = "shell.exec"
 args = "python manage.py runserver 0.0.0.0:8080"
 
+[[workflows.workflow]]
+name = "Run Daphne"
+author = 40840594
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "daphne -b 0.0.0.0 -p 8080 djangoapp.asgi:application"
+
 [[ports]]
 localPort = 3000
 externalPort = 3000

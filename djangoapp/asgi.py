@@ -16,10 +16,13 @@ from fastapi import FastAPI
 from fastapi.middleware.wsgi import WSGIMiddleware
 from myapp.views import app as fastapi_app
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_fastapi_project.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djangoapp.settings")
 
-django_asgi_app = get_asgi_application()
+django_app = get_asgi_application()
+fastapi_app = FastAPI()
 
-# Integrating FastAPI
-application = WSGIMiddleware(fastapi_app)
+# Mount Django app at /django and FastAPI at /api
+application = FastAPI()
+application.mount("/django", django_app)
+application.mount("/api", fastapi_app)
 
