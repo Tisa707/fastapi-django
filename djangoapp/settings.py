@@ -1,5 +1,7 @@
-# Create a Django project (replace 'myproject' with your desired project name)
-# django-admin startproject myproject .
+from pathlib import Path
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Create a Django app (replace 'myapp' with your desired app name)
 # python manage.py startapp myapp
