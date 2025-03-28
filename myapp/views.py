@@ -15,9 +15,10 @@ def get_db():
 
 @router.get("/api/create_user_via_url/")
 def create_user_via_url(name: str = Query(...), email: str = Query(...), db: Session = Depends(get_db)):
-    # Create a user using the URL parameters and pass name, email directly to CRUD function
-    user=schemas.UserCreate(name=name, email=email)
-    return {"name": user.name, "email": user.email}
+    # Create a user using the URL parameters
+    user = schemas.UserCreate(name=name, email=email)
+    db_user = crud.create_user(db=db, user=user)
+    return db_user
 
 
 # Get a list of users
