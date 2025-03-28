@@ -1,42 +1,51 @@
-from fastapi import FastAPI, HTTPException
-from myapp.models import Item
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.orm import Session
+from . import crud, schemas
+from .database import SessionLocal
 
-app = FastAPI()
+router = APIRouter()
 
-# In-memory database for items
-fake_items_db = {}
+# Dependency to get the database session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-# Read all items
-@app.get("/items/")
-def get_items():
-    return fake_items_db
+@router.get("/api/create_user_via_url/")
+def create_user_via_url(name: str = Query(...), email: str = Query(...), db: Session = Depends(get_db)):
+    # Create a user using the URL parameters and pass name, email directly to CRUD function
+    user=schemas.UserCreate(name=name, email=email)
+    return {"name": user.name, "email": user.email}
 
-# Create a new item
-@app.post("/items/")
-def  create_item(name: str, description: str, price: float):
-    item_id = int(len(fake_items_db) or 0)+ 1
-    fake_items_db[item_id] = {"name": name, "description": description, "price": price}
-    return {"item_id": item_id, "item": {"name": name, "description": description, "price": price}}
 
-# Get a single item by id
-@app.get("/items/{item_id}")
-def get_item(item_id: int):
-    if item_id not in fake_items_db:
-        raise HTTPException(status_code=404, detail="Item not found")
-    return fake_items_db[item_id]
+# Get a list of users
+@router.get("/users/", response_model=list[schemas.User])
+def get_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    users = crud.get_users(db=db, skip=skip, limit=limit)
+    return users
 
-# Update an existing item
-@app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
-    if item_id not in fake_items_db:
-        raise HTTPException(status_code=404, detail="Item not found")
-    fake_items_db[item_id] = item
-    return {"item_id": item_id, "updated_item": item}
+# Get a user by ID
+@router.get("/users/{user_id}", response_model=schemas.User)
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db=db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
 
-# Delete an item
-@app.delete("/items/{item_id}")
-def delete_item(item_id: int):
-    if item_id not in fake_items_db:
-        raise HTTPException(status_code=404, detail="Item not found")
-    del fake_items_db[item_id]
-    return {"message": f"Item {item_id} deleted successfully"}
+# Update a user by ID
+@router.put("/users/{user_id}", response_model=schemas.User)
+def update_user(user_id: int, user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = crud.update_user(db=db, user_id=user_id, user=user)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+# Delete a user by ID
+@router.delete("/users/{user_id}", response_model=schemas.User)
+def delete_user(user_id: int, db: Session = Depends(get_db)):
+    db_user = crud.delete_user(db=db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user

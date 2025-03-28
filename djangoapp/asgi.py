@@ -11,7 +11,7 @@ from fastapi import FastAPI
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djangoapp.settings")
 django.setup()  # Initialize Django before importing models
 
-from myapp.views import app as fastapi_app
+from myapp.views import router as fastapi_app
 
 django_app = get_asgi_application()
 
