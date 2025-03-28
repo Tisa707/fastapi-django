@@ -14,7 +14,7 @@ This is a simple CRUD (Create, Read, Update, Delete) application built using **F
 - **FastAPI**: For creating the fast, asynchronous REST API.
 - **Django**: Used as the main web framework for project structure.
 - **SQLAlchemy**: ORM used for database interactions.
-- **SQLite/PostgreSQL**: Database for storing user information (SQLite for local development or PostgreSQL if deployed).
+- **SQLite**: Database for storing user information (SQLite for local development or PostgreSQL if deployed).
 
 ## Installation
 
